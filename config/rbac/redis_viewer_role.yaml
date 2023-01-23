@@ -1,0 +1,27 @@
+# permissions for end users to view redis.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: redis-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: simple-redis
+    app.kubernetes.io/part-of: simple-redis
+    app.kubernetes.io/managed-by: kustomize
+  name: redis-viewer-role
+rules:
+- apiGroups:
+  - simple.simple.redis
+  resources:
+  - redis
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - simple.simple.redis
+  resources:
+  - redis/status
+  verbs:
+  - get

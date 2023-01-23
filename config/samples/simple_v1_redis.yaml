@@ -1,0 +1,12 @@
+apiVersion: simple.simple.redis/v1
+kind: Redis
+metadata:
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: redis-sample
+    app.kubernetes.io/part-of: simple-redis
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: simple-redis
+  name: redis-sample
+spec:
+  # TODO(user): Add fields here
