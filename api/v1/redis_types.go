@@ -20,8 +20,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+type Status string
+
+const (
+	StatusPending Status = "Pending"
+	StatusFailed         = "Failed"
+	StatusSuccess        = "Success"
+)
 
 // RedisSpec defines the desired state of Redis
 type RedisSpec struct {
@@ -29,7 +34,7 @@ type RedisSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// ClusterSize determines the amount of redis instances running
-	ClusterSize string `json:"clusterSize,omitempty"`
+	ClusterSize int `json:"clusterSize,omitempty"`
 
 	// LogLevel specifies the redis verbosity level.
 	// This can be one of:
@@ -37,12 +42,12 @@ type RedisSpec struct {
 	// verbose (many rarely useful info, but not a mess like the debug level)
 	// notice (moderately verbose, what you want in production probably)
 	// warning (only very important / critical messages are logged)
-	LogLevel string `json:logLevel,omitempty`
+	LogLevel string `json:"logLevel,omitempty"`
 
 	// Set the number of databases. The default database is DB 0, you can select
 	// a different one on a per-connection basis using SELECT <dbid> where
 	// dbid is a number between 0 and 'databases'-1
-	Databases string `json:databases,omitempty`
+	Databases string `json:"databases,omitempty"`
 }
 
 // RedisStatus defines the observed state of Redis
@@ -50,14 +55,14 @@ type RedisStatus struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// status of redis cluster
-	Status string `json:status,omitempty`
+	Status Status `json:"status,omitempty"`
 
 	// master pod name
-	Master string `json:master,omitempty`
+	Master string `json:"master,omitempty"`
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Redis is the Schema for the redis API
 type Redis struct {
@@ -68,7 +73,7 @@ type Redis struct {
 	Status RedisStatus `json:"status,omitempty"`
 }
 
-//+kubebuilder:object:root=true
+// +kubebuilder:object:root=true
 
 // RedisList contains a list of Redis
 type RedisList struct {
