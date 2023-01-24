@@ -1,5 +1,22 @@
-# simple-redis
-// TODO(user): Add simple overview of use/purpose
+# Simple Redis Operator
+
+This is just a simplified example of a Kubernetes operator that deploys [redis](https://redis.io/) clusters. This is not to be used in a production environment.
+
+This operator covers the following:
+
+- [ ] Deploys a master redis instance with networking setup
+- [ ] Deploys replicas redis instances that are setup to replicate the master instance
+- [ ] Allows some basic settings of the redis instances
+- [ ] Validation of input with sensible defaults
+
+Potential roadmap items that could be added, but will not be for this iteration
+
+- [ ] Setup state using a Storage Class
+- [ ] Setup automated master election in case of failure of master redis instance
+- [ ] Allow various scheduling options such as taints an tolerations 
+- [ ] TLS setup between replicas and master
+- [ ] Allow for setting various other configurations on the redis instances
+- [ ] Multi Master setup
 
 ## Description
 // TODO(user): An in-depth paragraph about your project and overview of use
