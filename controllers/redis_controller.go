@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-logr/logr"
@@ -123,10 +124,14 @@ func (r *RedisReconciler) updateStatus(ctx context.Context, sr simplev1.Redis, s
 
 // reconcileMasterDeploy used to reconcile the master redis instance deployment
 func (r *RedisReconciler) reconcileMasterDeploy(ctx context.Context, req ctrl.Request, sr simplev1.Redis) error {
+	args := []string{
+		fmt.Sprintf("--loglevel %v", sr.Spec.LogLevel),
+		fmt.Sprintf("--databases %v", sr.Spec.Databases),
+	}
 	// master has a single replica for now as multi master would be a future
 	// iteration
 	// TODO allow multi master setup
-	deploy := iredis.GenerateRedisDeploy(sr.Name, req.Namespace, "master", 1)
+	deploy := iredis.GenerateRedisDeploy(sr.Name, req.Namespace, "master", 1, args)
 	if err := controllerutil.SetControllerReference(&sr, deploy, r.Scheme); err != nil {
 		return err
 	}
@@ -175,7 +180,12 @@ func (r *RedisReconciler) reconcileReplicaDeploy(ctx context.Context, req ctrl.R
 	if replicas < 0 {
 		replicas = 0
 	}
-	deploy := iredis.GenerateRedisDeploy(sr.Name, req.Namespace, "replica", replicas)
+	args := []string{
+		fmt.Sprintf("--loglevel %v", sr.Spec.LogLevel),
+		fmt.Sprintf("--databases %v", sr.Spec.Databases),
+		fmt.Sprintf("--replicaof %v-master 6392", sr.Name),
+	}
+	deploy := iredis.GenerateRedisDeploy(sr.Name, req.Namespace, "replica", replicas, args)
 	if err := controllerutil.SetControllerReference(&sr, deploy, r.Scheme); err != nil {
 		return err
 	}
