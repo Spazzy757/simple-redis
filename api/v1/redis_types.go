@@ -20,12 +20,23 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// resource status enum
 type Status string
 
 const (
 	StatusPending Status = "Pending"
-	StatusFailed         = "Failed"
-	StatusSuccess        = "Success"
+	StatusFailed  Status = "Failed"
+	StatusSuccess Status = "Success"
+)
+
+// redis log levels enum
+type RedisLogLevel string
+
+const (
+	RLogLevelDebug   RedisLogLevel = "debug"
+	RLogLevelVerbose RedisLogLevel = "verbose"
+	RLogLevelNotice  RedisLogLevel = "notice"
+	RLogLevelWarning RedisLogLevel = "warning"
 )
 
 // RedisSpec defines the desired state of Redis
@@ -42,12 +53,12 @@ type RedisSpec struct {
 	// verbose (many rarely useful info, but not a mess like the debug level)
 	// notice (moderately verbose, what you want in production probably)
 	// warning (only very important / critical messages are logged)
-	LogLevel string `json:"logLevel,omitempty"`
+	LogLevel RedisLogLevel `json:"logLevel,omitempty"`
 
 	// Set the number of databases. The default database is DB 0, you can select
 	// a different one on a per-connection basis using SELECT <dbid> where
 	// dbid is a number between 0 and 'databases'-1
-	Databases string `json:"databases,omitempty"`
+	Databases int `json:"databases,omitempty"`
 }
 
 // RedisStatus defines the observed state of Redis
@@ -61,10 +72,9 @@ type RedisStatus struct {
 	Master string `json:"master,omitempty"`
 }
 
+// Redis is the Schema for the redis API
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-
-// Redis is the Schema for the redis API
 type Redis struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

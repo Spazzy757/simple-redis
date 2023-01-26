@@ -62,7 +62,6 @@ var _ = Describe("redis controller", func() {
 				}
 				return true
 			}, timeout, interval).Should(BeTrue())
-			Expect(createdRedis.Status.Status).Should(Equal(simplev1.StatusPending))
 
 			By("creating a master redis deployment")
 			masterdeploy := &appsv1.Deployment{}
@@ -98,6 +97,14 @@ var _ = Describe("redis controller", func() {
 			}, timeout, interval).Should(BeTrue())
 			Expect(replicadeploy.ObjectMeta.Name).Should(Equal(resourceReplicaName))
 			Expect(*replicadeploy.Spec.Replicas).Should(Equal(int32(0)))
+			Eventually(func() bool {
+				err := k8sClient.Get(ctx, redisLookup, createdRedis)
+				if err != nil {
+					return false
+				}
+				return true
+			}, timeout, interval).Should(BeTrue())
+			Expect(createdRedis.Status.Status).Should(Equal(simplev1.StatusSuccess))
 		})
 	})
 })

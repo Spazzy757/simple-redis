@@ -43,7 +43,7 @@ spec:
                 description: Set the number of databases. The default database is
                   DB 0, you can select a different one on a per-connection basis using
                   SELECT <dbid> where dbid is a number between 0 and 'databases'-1
-                type: string
+                type: integer
               logLevel:
                 description: 'LogLevel specifies the redis verbosity level. This can
                   be one of: debug (a lot of information, useful for development/testing)
