@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-logr/logr"
 	"github.com/hashicorp/go-multierror"
@@ -60,14 +61,17 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// fetch redis resource
 	var sr simplev1.Redis
 	if err := r.Get(ctx, req.NamespacedName, &sr); err != nil {
-		log.Error(err, "unable to fetch redis")
+		log.Info("unable to fetch redis")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	var errors error
-	if err := r.updateStatus(ctx, sr, simplev1.StatusPending); err != nil {
-		errors = multierror.Append(errors, err)
+	if sr.Status.Status == "" {
+		if err := r.updateStatus(ctx, sr, simplev1.StatusPending); err != nil {
+			return ctrl.Result{RequeueAfter: time.Second * 3}, err
+		}
 	}
+
+	var errors error
 	if err := r.reconcileMasterDeploy(ctx, req, sr); err != nil {
 		log.V(1).Error(err, "failed reconciling master deployment")
 		errors = multierror.Append(errors, err)
@@ -90,14 +94,14 @@ func (r *RedisReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		if err := r.updateStatus(ctx, sr, simplev1.StatusFailed); err != nil {
 			errors = multierror.Append(errors, err)
 		}
-	} else {
-		if err := r.updateStatus(ctx, sr, simplev1.StatusSuccess); err != nil {
-			errors = multierror.Append(errors, err)
-		}
+	}
+
+	if err := r.updateStatus(ctx, sr, simplev1.StatusSuccess); err != nil {
+		errors = multierror.Append(errors, err)
 	}
 
 	log.Info("finished reconciliation")
-	return ctrl.Result{}, errors
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
