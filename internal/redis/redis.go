@@ -32,7 +32,7 @@ func GenerateRedisSvc(name, ns, role string) *v1.Service {
 }
 
 // GenerateRedisDeploy used to setup the deployment resource
-func GenerateRedisDeploy(name, ns, role string, replicas int) *appsv1.Deployment {
+func GenerateRedisDeploy(name, ns, role string, replicas int, args []string) *appsv1.Deployment {
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      generateName(name, role),
@@ -54,6 +54,7 @@ func GenerateRedisDeploy(name, ns, role string, replicas int) *appsv1.Deployment
 							Name: "redis",
 							//TODO Make this configurable
 							Image: "redis:6.2.3-alpine",
+							Args:  args,
 							Ports: []v1.ContainerPort{
 								{
 									Name:          "redis",
