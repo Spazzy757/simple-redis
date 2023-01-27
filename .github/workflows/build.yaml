@@ -27,7 +27,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: spazz757/simple-redis
+          images: spazzy757/simple-redis
           tags: |
             type=sha,format=long,prefix=,priority=200
             type=raw,value=latest,enable={{is_default_branch}},priority=100
