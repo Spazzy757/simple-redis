@@ -4,10 +4,10 @@ This is just a simplified example of a Kubernetes operator that deploys [redis](
 
 This operator covers the following:
 
-- [ ] Deploys a master redis instance with networking setup
-- [ ] Deploys replicas redis instances that are setup to replicate the master instance
-- [ ] Allows some basic settings of the redis instances
-- [ ] Validation of input with sensible defaults
+- [x] Deploys a master redis instance with networking setup
+- [x] Deploys replicas redis instances that are setup to replicate the master instance
+- [x] Allows some basic settings of the redis instances
+- [x] Validation of input with sensible defaults
 
 Potential roadmap items that could be added, but will not be for this iteration
 
@@ -19,7 +19,18 @@ Potential roadmap items that could be added, but will not be for this iteration
 - [ ] Multi Master setup
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+
+This is a simple redis operator, it will deploy a single master instance with
+as many replicas as specified.
+
+This is not a production grade application but was rather used to show the
+different aspects of a Kubernetes operator including:
+
+- Validating and Mutating Webhooks for sensible defaults as well as resource
+  validation
+- Reconcile logic
+- Resource Ownership
+- Idempotent Reonciliation
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
@@ -43,6 +54,15 @@ make docker-build docker-push IMG=<some-registry>/simple-redis:tag
 ```sh
 make deploy IMG=<some-registry>/simple-redis:tag
 ```
+
+### Webhooks
+
+**Note:** The webhooks setup will require you to setup TLS. Yopu will need to
+update the MutatingWebhookConfiguration and the ValidatingWebhookConfiguration
+and supply the Certs to the operator. You can read up more on how this works in
+the [Deploying Admission Webhooks][1] in the Kubebuilder Book
+
+[1]: https://book.kubebuilder.io/cronjob-tutorial/running-webhook.html
 
 ### Uninstall CRDs
 To delete the CRDs from the cluster:
