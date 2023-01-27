@@ -127,6 +127,7 @@ func (r *RedisReconciler) reconcileMasterDeploy(ctx context.Context, req ctrl.Re
 	args := []string{
 		fmt.Sprintf("--loglevel %v", sr.Spec.LogLevel),
 		fmt.Sprintf("--databases %v", sr.Spec.Databases),
+		"--bind 0.0.0.0",
 	}
 	// master has a single replica for now as multi master would be a future
 	// iteration
@@ -184,6 +185,7 @@ func (r *RedisReconciler) reconcileReplicaDeploy(ctx context.Context, req ctrl.R
 		fmt.Sprintf("--loglevel %v", sr.Spec.LogLevel),
 		fmt.Sprintf("--databases %v", sr.Spec.Databases),
 		fmt.Sprintf("--replicaof %v-master 6392", sr.Name),
+		"--bind 0.0.0.0",
 	}
 	deploy := iredis.GenerateRedisDeploy(sr.Name, req.Namespace, "replica", replicas, args)
 	if err := controllerutil.SetControllerReference(&sr, deploy, r.Scheme); err != nil {
